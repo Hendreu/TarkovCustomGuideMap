@@ -12,24 +12,34 @@ export default function MapPage({ params }: { params: Promise<{ id: string }> })
   const { id } = use(params);
   const map = getMapById(id);
   const [customKeys, setCustomKeys] = useState<any[]>([]);
+  const [customPins, setCustomPins] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchKeys() {
+    async function fetchData() {
       try {
-        const response = await fetch(`/api/keys/${id}`);
-        if (response.ok) {
-          const data = await response.json();
-          setCustomKeys(data.keys || []);
+        const [keysResponse, pinsResponse] = await Promise.all([
+          fetch(`/api/keys/${id}`),
+          fetch(`/api/pins/${id}`)
+        ]);
+
+        if (keysResponse.ok) {
+          const keysData = await keysResponse.json();
+          setCustomKeys(keysData.keys || []);
+        }
+
+        if (pinsResponse.ok) {
+          const pinsData = await pinsResponse.json();
+          setCustomPins(pinsData.pins || []);
         }
       } catch (error) {
-        console.error('Error fetching keys:', error);
+        console.error('Error fetching data:', error);
       } finally {
         setLoading(false);
       }
     }
     
-    fetchKeys();
+    fetchData();
   }, [id]);
 
   if (!map) {
@@ -38,6 +48,13 @@ export default function MapPage({ params }: { params: Promise<{ id: string }> })
 
   // Combine static and custom keys
   const allKeys = [...map.keys, ...customKeys];
+
+  // Calculate total pins (static + custom)
+  const totalLoot = map.lootLocations.length + customPins.filter(p => p.type === 'loot').length;
+  const totalBosses = map.bossSpawns.length + customPins.filter(p => p.type === 'boss').length;
+  const totalExtracts = map.extractions.length + customPins.filter(p => p.type === 'extract').length;
+  const totalQuests = customPins.filter(p => p.type === 'quest').length;
+  const totalQuestItems = customPins.filter(p => p.type === 'quest_item').length;
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] flex flex-col">
@@ -133,21 +150,27 @@ export default function MapPage({ params }: { params: Promise<{ id: string }> })
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-[#9fad7d]">Loot Spots:</span>
-                  <span className="text-[#d4a94f] font-bold">
-                    {map.lootLocations.length}
-                  </span>
+                  <span className="text-[#d4a94f] font-bold">{totalLoot}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#9fad7d]">Boss Spawns:</span>
-                  <span className="text-[#c44f42] font-bold">{map.bossSpawns.length}</span>
+                  <span className="text-[#c44f42] font-bold">{totalBosses}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#9fad7d]">Extractions:</span>
-                  <span className="text-[#4f9fd4] font-bold">{map.extractions.length}</span>
+                  <span className="text-[#4f9fd4] font-bold">{totalExtracts}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#9fad7d]">Quests:</span>
+                  <span className="text-[#f59e42] font-bold">{totalQuests}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-[#9fad7d]">Quest Items:</span>
+                  <span className="text-[#a855f7] font-bold">{totalQuestItems}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-[#9fad7d]">Keys:</span>
-                  <span className="text-[#e8e6e3] font-bold">{allKeys.length}</span>
+                  <span className="text-[#60a5fa] font-bold">{allKeys.length}</span>
                 </div>
               </div>
             </div>
