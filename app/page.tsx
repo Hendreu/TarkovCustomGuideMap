@@ -64,10 +64,10 @@ export default function Home() {
           >
             <div>
               <h1 className="text-5xl font-bold text-[#e8e6e3] mb-2 tracking-tight">
-                TARKOV TACTICAL MAPS
+                TARKOV ALI MAPS!
               </h1>
               <p className="text-[#9fad7d] text-lg">
-                Interactive guide for maps, loot, bosses and extractions
+                Interactive guide for maps, loot, bosses and extractions to make Ali life easier.
               </p>
             </div>
             <Link
