@@ -43,17 +43,17 @@ export default function AdminMapEditor({ map, onPinPlaced, onCancel, previewPin 
   const getColorForType = (type: 'loot' | 'boss' | 'extract' | 'key' | 'quest' | 'quest_item') => {
     switch (type) {
       case 'loot':
-        return '#d4a94f';
+        return '#d4a94f'; // Dourado/Amarelo
       case 'boss':
-        return '#c44f42';
+        return '#c44f42'; // Vermelho
       case 'extract':
-        return '#4f9fd4';
+        return '#4ade80'; // Verde
       case 'key':
-        return '#9fad7d';
+        return '#60a5fa'; // Azul
       case 'quest':
-        return '#f59e42';
+        return '#f59e42'; // Laranja
       case 'quest_item':
-        return '#a855f7';
+        return '#a855f7'; // Roxo
     }
   };
 

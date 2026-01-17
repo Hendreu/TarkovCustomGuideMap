@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { MAPS } from './data/maps';
-import { Map, Skull, Package, DoorOpen } from 'lucide-react';
+import { Map, Skull, Package, DoorOpen, Target } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 

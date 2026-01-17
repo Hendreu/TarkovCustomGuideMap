@@ -65,17 +65,17 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
   const getMarkerColor = (type: MarkerType) => {
     switch (type) {
       case 'loot':
-        return '#d4a94f';
+        return '#d4a94f'; // Dourado/Amarelo
       case 'boss':
-        return '#c44f42';
+        return '#c44f42'; // Vermelho
       case 'extract':
-        return '#4f9fd4';
+        return '#4ade80'; // Verde
       case 'key':
-        return '#9fad7d';
+        return '#60a5fa'; // Azul
       case 'quest':
-        return '#f59e42';
+        return '#f59e42'; // Laranja
       case 'quest_item':
-        return '#a855f7';
+        return '#a855f7'; // Roxo
       default:
         return '#9fad7d';
     }
@@ -115,14 +115,14 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
             onClick={() => setActiveFilter('extract')}
             icon={<DoorOpen size={18} />}
             label={`Extracts (${allExtractions.length})`}
-            color="#4f9fd4"
+            color="#4ade80"
           />
           <FilterButton
             active={activeFilter === 'key'}
             onClick={() => setActiveFilter('key')}
             icon={<Key size={18} />}
             label={`Keys (${allKeys.length})`}
-            color="#9fad7d"
+            color="#60a5fa"
           />
           <FilterButton
             active={activeFilter === 'quest'}
@@ -220,7 +220,7 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
                   <Marker
                     key={extract.id}
                     location={extract}
-                    color="#4f9fd4"
+                    color="#4ade80"
                     icon={<DoorOpen size={16} />}
                     isSelected={selectedMarker === extract.id}
                     onClick={() => setSelectedMarker(extract.id)}
@@ -235,7 +235,7 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
                   <Marker
                     key={keyItem.id}
                     location={keyItem}
-                    color="#9fad7d"
+                    color="#60a5fa"
                     icon={<Key size={16} />}
                     isSelected={selectedMarker === keyItem.id}
                     onClick={() => setSelectedMarker(keyItem.id)}
@@ -302,11 +302,11 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
             <span className="text-[#9fad7d]">Boss</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#4f9fd4]"></div>
+            <div className="w-3 h-3 rounded-full bg-[#4ade80]"></div>
             <span className="text-[#9fad7d]">Extract</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#9fad7d]"></div>
+            <div className="w-3 h-3 rounded-full bg-[#60a5fa]"></div>
             <span className="text-[#9fad7d]">Key</span>
           </div>
           <div className="flex items-center gap-2">
