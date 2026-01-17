@@ -4,6 +4,51 @@ import Link from 'next/link';
 import { MAPS } from './data/maps';
 import { Map, Skull, Package, DoorOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+
+export default function Home() {
+  const [totalPins, setTotalPins] = useState({ loot: 0, boss: 0, extract: 0, quest: 0, quest_item: 0 });
+  const [mapPinCounts, setMapPinCounts] = useState<Record<string, any>>({});
+
+  useEffect(() => {
+    async function fetchAllPins() {
+      try {
+        const response = await fetch('/api/pins');
+        if (response.ok) {
+          const data = await response.json();
+          const pins = data.pins || [];
+          
+          // Count total pins by type
+          const counts = {
+            loot: pins.filter((p: any) => p.type === 'loot').length,
+            boss: pins.filter((p: any) => p.type === 'boss').length,
+            extract: pins.filter((p: any) => p.type === 'extract').length,
+            quest: pins.filter((p: any) => p.type === 'quest').length,
+            quest_item: pins.filter((p: any) => p.type === 'quest_item').length,
+          };
+          setTotalPins(counts);
+
+          // Count pins per map
+          const perMap: Record<string, any> = {};
+          MAPS.forEach(map => {
+            const mapPins = pins.filter((p: any) => p.map_id === map.id);
+            perMap[map.id] = {
+              loot: mapPins.filter((p: any) => p.type === 'loot').length,
+              boss: mapPins.filter((p: any) => p.type === 'boss').length,
+              extract: mapPins.filter((p: any) => p.type === 'extract').length,
+              quest: mapPins.filter((p: any) => p.type === 'quest').length,
+              quest_item: mapPins.filter((p: any) => p.type === 'quest_item').length,
+            };
+          });
+          setMapPinCounts(perMap);
+        }
+      } catch (error) {
+        console.error('Error fetching pins:', error);
+      }
+    }
+    
+    fetchAllPins();
+  }, []);
 
 export default function Home() {
   return (
@@ -48,17 +93,17 @@ export default function Home() {
           <StatCard
             icon={<Package />}
             label="Loot Spots"
-            value={MAPS.reduce((acc, map) => acc + map.lootLocations.length, 0)}
+            value={totalPins.loot}
           />
           <StatCard
             icon={<Skull />}
             label="Boss Spawns"
-            value={MAPS.reduce((acc, map) => acc + map.bossSpawns.length, 0)}
+            value={totalPins.boss}
           />
           <StatCard
             icon={<DoorOpen />}
             label="Extractions"
-            value={MAPS.reduce((acc, map) => acc + map.extractions.length, 0)}
+            value={totalPins.extract}
           />
         </motion.div>
 
@@ -92,15 +137,15 @@ export default function Home() {
                     <div className="flex gap-4 text-sm">
                       <div className="flex items-center gap-1 text-[#d4a94f]">
                         <Package size={16} />
-                        <span>{map.lootLocations.length} loot</span>
+                        <span>{mapPinCounts[map.id]?.loot || 0} loot</span>
                       </div>
                       <div className="flex items-center gap-1 text-[#c44f42]">
                         <Skull size={16} />
-                        <span>{map.bossSpawns.length} boss</span>
+                        <span>{mapPinCounts[map.id]?.boss || 0} boss</span>
                       </div>
                       <div className="flex items-center gap-1 text-[#4f9fd4]">
                         <DoorOpen size={16} />
-                        <span>{map.extractions.length} extract</span>
+                        <span>{mapPinCounts[map.id]?.extract || 0} extract</span>
                       </div>
                     </div>
                   </div>
