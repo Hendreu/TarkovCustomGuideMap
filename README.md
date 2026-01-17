@@ -75,7 +75,7 @@ DATABASE_URL=your-database-url
 The site is public and doesn't require login to view maps. However, to add, edit, or delete pins, you need admin access:
 
 1. Click the "Admin" button in the header
-2. Enter admin password: `alisucksbutwehelp`
+2. Enter the admin password
 3. Access the admin dashboard to manage pins
 
 **Admin Features:**
@@ -84,7 +84,7 @@ The site is public and doesn't require login to view maps. However, to add, edit
 - Set position (X, Y percentage)
 - Add descriptions and type-specific data
 - Delete custom pins
-- All changes saved to SQLite database
+- All changes saved to database
 - Only admin can modify pins (users can only view)
 
 ### Security
@@ -189,12 +189,12 @@ Edit `app/data/maps.ts` and add a new object following the `TarkovMap` interface
 - Legend and usage tips
 
 ### Admin Panel
-- Password-protected access (password: `alisucksbutwehelp`)
+- Password-protected access
 - Map selector
 - Add custom pins with detailed information
 - View and delete custom pins
 - Real-time updates on public site via API
-- Server-side persistence with SQLite
+- Server-side persistence
 - Protected API endpoints (only admin can modify)
 
 ## 🔒 Security Notes
