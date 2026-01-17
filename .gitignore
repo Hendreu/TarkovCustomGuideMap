@@ -46,7 +46,3 @@ next-env.d.ts
 *.db-shm
 *.db-wal
 
-# local data storage
-/data/pins.json
-/data/keys.json
-

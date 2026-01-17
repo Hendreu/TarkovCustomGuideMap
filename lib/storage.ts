@@ -1,5 +1,4 @@
-import fs from 'fs';
-import path from 'path';
+import { kv } from '@vercel/kv';
 
 // Pin types
 export interface PinData {
@@ -51,24 +50,14 @@ export interface KeyData {
   updated_at?: string;
 }
 
-// Local file paths
-const DATA_DIR = path.join(process.cwd(), 'data');
-const PINS_FILE = path.join(DATA_DIR, 'pins.json');
-const KEYS_FILE = path.join(DATA_DIR, 'keys.json');
-
-// Ensure data directory exists
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-}
+const PINS_KEY = 'tarkov:pins';
+const KEYS_KEY = 'tarkov:keys';
 
 // Read functions
 async function readPins(): Promise<PinData[]> {
   try {
-    if (!fs.existsSync(PINS_FILE)) {
-      return [];
-    }
-    const data = fs.readFileSync(PINS_FILE, 'utf-8');
-    return JSON.parse(data);
+    const pins = await kv.get<PinData[]>(PINS_KEY);
+    return pins || [];
   } catch (error) {
     console.error('Error reading pins:', error);
     return [];
@@ -77,11 +66,8 @@ async function readPins(): Promise<PinData[]> {
 
 async function readKeys(): Promise<KeyData[]> {
   try {
-    if (!fs.existsSync(KEYS_FILE)) {
-      return [];
-    }
-    const data = fs.readFileSync(KEYS_FILE, 'utf-8');
-    return JSON.parse(data);
+    const keys = await kv.get<KeyData[]>(KEYS_KEY);
+    return keys || [];
   } catch (error) {
     console.error('Error reading keys:', error);
     return [];
@@ -90,11 +76,11 @@ async function readKeys(): Promise<KeyData[]> {
 
 // Write functions
 async function writePins(pins: PinData[]): Promise<void> {
-  fs.writeFileSync(PINS_FILE, JSON.stringify(pins, null, 2), 'utf-8');
+  await kv.set(PINS_KEY, pins);
 }
 
 async function writeKeys(keys: KeyData[]): Promise<void> {
-  fs.writeFileSync(KEYS_FILE, JSON.stringify(keys, null, 2), 'utf-8');
+  await kv.set(KEYS_KEY, keys);
 }
 
 // Pin operations
