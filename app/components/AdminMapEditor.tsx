@@ -2,7 +2,7 @@
 
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { TarkovMap } from '../types/map';
-import { MapPin, Skull, DoorOpen, Key, X } from 'lucide-react';
+import { MapPin, Skull, DoorOpen, Key, X, Target, Package } from 'lucide-react';
 import { useState, useRef, useCallback } from 'react';
 
 interface AdminMapEditorProps {
@@ -12,7 +12,7 @@ interface AdminMapEditorProps {
   previewPin?: {
     x: number;
     y: number;
-    type: 'loot' | 'boss' | 'extract' | 'key';
+    type: 'loot' | 'boss' | 'extract' | 'key' | 'quest' | 'quest_item';
   };
 }
 
@@ -23,7 +23,7 @@ export default function AdminMapEditor({ map, onPinPlaced, onCancel, previewPin 
   );
   const mapRef = useRef<HTMLDivElement>(null);
 
-  const getIconForType = (type: 'loot' | 'boss' | 'extract' | 'key') => {
+  const getIconForType = (type: 'loot' | 'boss' | 'extract' | 'key' | 'quest' | 'quest_item') => {
     switch (type) {
       case 'loot':
         return <MapPin size={16} />;
@@ -33,10 +33,14 @@ export default function AdminMapEditor({ map, onPinPlaced, onCancel, previewPin 
         return <DoorOpen size={16} />;
       case 'key':
         return <Key size={16} />;
+      case 'quest':
+        return <Target size={16} />;
+      case 'quest_item':
+        return <Package size={16} />;
     }
   };
 
-  const getColorForType = (type: 'loot' | 'boss' | 'extract' | 'key') => {
+  const getColorForType = (type: 'loot' | 'boss' | 'extract' | 'key' | 'quest' | 'quest_item') => {
     switch (type) {
       case 'loot':
         return '#d4a94f';
@@ -46,6 +50,10 @@ export default function AdminMapEditor({ map, onPinPlaced, onCancel, previewPin 
         return '#4f9fd4';
       case 'key':
         return '#9fad7d';
+      case 'quest':
+        return '#f59e42';
+      case 'quest_item':
+        return '#a855f7';
     }
   };
 
