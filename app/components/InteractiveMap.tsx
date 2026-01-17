@@ -161,7 +161,7 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
                     icon={<Skull size={16} />}
                     isSelected={selectedMarker === boss.id}
                     onClick={() => setSelectedMarker(boss.id)}
-                    label={boss.bossName}
+                    label={boss.name}
                   />
                 ))}
 
