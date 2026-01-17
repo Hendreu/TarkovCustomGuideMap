@@ -370,7 +370,7 @@ function Marker({ location, color, icon, isSelected, onClick, label, pinSize }: 
             backgroundColor: color, 
             color: 'white',
             top: `${scaledSize + 8}px`,
-            fontSize: `${12 * Math.min(pinSize, 1.5)}px`,
+            fontSize: '12px',
           }}
         >
           {label}
