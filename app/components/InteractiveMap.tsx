@@ -2,14 +2,14 @@
 
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { TarkovMap, LootLocation, BossSpawn, ExtractionPoint } from '../types/map';
-import { MapPin, Skull, DoorOpen, Key } from 'lucide-react';
+import { MapPin, Skull, DoorOpen, Key, Target, Package } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface InteractiveMapProps {
   map: TarkovMap;
 }
 
-type MarkerType = 'loot' | 'boss' | 'extract' | 'key' | 'all';
+type MarkerType = 'loot' | 'boss' | 'extract' | 'key' | 'quest' | 'quest_item' | 'all';
 
 export default function InteractiveMap({ map }: InteractiveMapProps) {
   const [activeFilter, setActiveFilter] = useState<MarkerType>('all');
@@ -52,11 +52,15 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
   const customLootPins = customPins.filter(p => p.type === 'loot');
   const customBossPins = customPins.filter(p => p.type === 'boss');
   const customExtractPins = customPins.filter(p => p.type === 'extract');
+  const customQuestPins = customPins.filter(p => p.type === 'quest');
+  const customQuestItemPins = customPins.filter(p => p.type === 'quest_item');
 
   const allLootLocations = [...map.lootLocations, ...customLootPins];
   const allBossSpawns = [...map.bossSpawns, ...customBossPins];
   const allExtractions = [...map.extractions, ...customExtractPins];
   const allKeys = customKeys;
+  const allQuests = customQuestPins;
+  const allQuestItems = customQuestItemPins;
 
   const getMarkerColor = (type: MarkerType) => {
     switch (type) {
@@ -68,6 +72,10 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
         return '#4f9fd4';
       case 'key':
         return '#9fad7d';
+      case 'quest':
+        return '#f59e42';
+      case 'quest_item':
+        return '#a855f7';
       default:
         return '#9fad7d';
     }
@@ -115,6 +123,20 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
             icon={<Key size={18} />}
             label={`Keys (${allKeys.length})`}
             color="#9fad7d"
+          />
+          <FilterButton
+            active={activeFilter === 'quest'}
+            onClick={() => setActiveFilter('quest')}
+            icon={<Target size={18} />}
+            label={`Quests (${allQuests.length})`}
+            color="#f59e42"
+          />
+          <FilterButton
+            active={activeFilter === 'quest_item'}
+            onClick={() => setActiveFilter('quest_item')}
+            icon={<Package size={18} />}
+            label={`Items (${allQuestItems.length})`}
+            color="#a855f7"
           />
         </div>
         
@@ -221,6 +243,36 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
                     pinSize={pinSize}
                   />
                 ))}
+
+              {/* Quest Markers */}
+              {shouldShowMarker('quest') &&
+                allQuests.map((quest) => (
+                  <Marker
+                    key={quest.id}
+                    location={quest}
+                    color="#f59e42"
+                    icon={<Target size={16} />}
+                    isSelected={selectedMarker === quest.id}
+                    onClick={() => setSelectedMarker(quest.id)}
+                    label={quest.name}
+                    pinSize={pinSize}
+                  />
+                ))}
+
+              {/* Quest Item Markers */}
+              {shouldShowMarker('quest_item') &&
+                allQuestItems.map((item) => (
+                  <Marker
+                    key={item.id}
+                    location={item}
+                    color="#a855f7"
+                    icon={<Package size={16} />}
+                    isSelected={selectedMarker === item.id}
+                    onClick={() => setSelectedMarker(item.id)}
+                    label={item.name}
+                    pinSize={pinSize}
+                  />
+                ))}
             </div>
           </TransformComponent>
         </TransformWrapper>
@@ -229,7 +281,7 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
         {selectedMarker && (
           <InfoPanel
             marker={
-              [...allLootLocations, ...allBossSpawns, ...allExtractions, ...allKeys].find(
+              [...allLootLocations, ...allBossSpawns, ...allExtractions, ...allKeys, ...allQuests, ...allQuestItems].find(
                 (m) => m.id === selectedMarker
               )!
             }
@@ -240,7 +292,7 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
 
       {/* Legend */}
       <div className="p-4 bg-[#1a1d1a] border-t border-[#4a5240] text-sm">
-        <div className="flex gap-6">
+        <div className="flex gap-6 flex-wrap">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-[#d4a94f]"></div>
             <span className="text-[#9fad7d]">Interesting Place</span>
@@ -256,6 +308,14 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-[#9fad7d]"></div>
             <span className="text-[#9fad7d]">Key</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-[#f59e42]"></div>
+            <span className="text-[#9fad7d]">Quest</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-[#a855f7]"></div>
+            <span className="text-[#9fad7d]">Quest Item</span>
           </div>
         </div>
       </div>
@@ -357,6 +417,8 @@ function InfoPanel({ marker, onClose }: InfoPanelProps) {
   const isExtract = 'requirements' in marker || 'always' in marker;
   const isLoot = 'type' in marker && 'quality' in marker;
   const isKey = 'location' in marker && 'unlocks' in marker && 'worth' in marker;
+  const isQuest = 'type' in marker && marker.type === 'quest';
+  const isQuestItem = 'type' in marker && marker.type === 'quest_item';
 
   return (
     <div className="absolute top-4 right-4 w-80 bg-[#1a1d1a] border-2 border-[#4a5240] rounded-lg p-4 shadow-2xl animate-fade-in">
@@ -420,6 +482,40 @@ function InfoPanel({ marker, onClose }: InfoPanelProps) {
               </span>
             </div>
           </div>
+      )}
+
+      {isQuest && (
+        <div className="space-y-2 text-sm">
+          {marker.quest_giver && (
+            <div>
+              <span className="text-[#9fad7d]">Quest Giver: </span>
+              <span className="text-[#f59e42] font-bold">{marker.quest_giver}</span>
+            </div>
+          )}
+          {marker.objective && (
+            <div>
+              <span className="text-[#9fad7d]">Objective: </span>
+              <span className="text-[#e8e6e3]">{marker.objective}</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {isQuestItem && (
+        <div className="space-y-2 text-sm">
+          {marker.item_name && (
+            <div>
+              <span className="text-[#9fad7d]">Item: </span>
+              <span className="text-[#a855f7] font-bold">{marker.item_name}</span>
+            </div>
+          )}
+          {marker.needed_for && (
+            <div>
+              <span className="text-[#9fad7d]">Needed For: </span>
+              <span className="text-[#e8e6e3]">{marker.needed_for}</span>
+            </div>
+          )}
+        </div>
       )}
 
       {isKey && (

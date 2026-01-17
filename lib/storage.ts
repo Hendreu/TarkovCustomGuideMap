@@ -4,7 +4,7 @@ import { kv } from '@vercel/kv';
 export interface PinData {
   id: string;
   map_id: string;
-  type: 'loot' | 'boss' | 'extract';
+  type: 'loot' | 'boss' | 'extract' | 'quest' | 'quest_item';
   name: string;
   x: number;
   y: number;
@@ -26,6 +26,14 @@ export interface PinData {
   always_available?: boolean;
   pmc?: boolean;
   scav_only?: boolean;
+  
+  // Quest-specific
+  quest_giver?: string;
+  objective?: string;
+  
+  // Quest Item-specific
+  item_name?: string;
+  needed_for?: string;
 }
 
 export interface KeyData {

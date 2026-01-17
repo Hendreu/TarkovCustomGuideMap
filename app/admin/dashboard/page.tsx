@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { MAPS } from '@/app/data/maps';
 import { TarkovMap, LootLocation, BossSpawn, ExtractionPoint } from '@/app/types/map';
-import { Plus, Edit, Trash2, LogOut, Save, X, MapPin as MapPinIcon, Key } from 'lucide-react';
+import { Plus, Edit, Trash2, LogOut, Save, X, MapPin as MapPinIcon, Key, Target, Package } from 'lucide-react';
 import AdminMapEditor from '@/app/components/AdminMapEditor';
 
-type PinType = 'loot' | 'boss' | 'extract' | 'key';
+type PinType = 'loot' | 'boss' | 'extract' | 'key' | 'quest' | 'quest_item';
 
 interface PinFormData {
   mapId: string;
@@ -33,6 +33,12 @@ interface PinFormData {
   uses?: number;
   worth?: 'high' | 'medium' | 'low';
   unlocks?: string;
+  // Quest specific
+  questGiver?: string;
+  objective?: string;
+  // Quest Item specific
+  itemName?: string;
+  neededFor?: string;
 }
 
 export default function AdminDashboard() {
@@ -251,6 +257,12 @@ export default function AdminDashboard() {
         pinData.always_available = formData.always ?? false;
         pinData.pmc = formData.pmc ?? true;
         pinData.scav_only = formData.scavOnly ?? false;
+      } else if (formData.type === 'quest') {
+        pinData.quest_giver = formData.questGiver || '';
+        pinData.objective = formData.objective || '';
+      } else if (formData.type === 'quest_item') {
+        pinData.item_name = formData.itemName || '';
+        pinData.needed_for = formData.neededFor || '';
       }
 
       // Update or create
@@ -476,7 +488,7 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="space-y-4">
-                  {['loot', 'boss', 'extract'].map((type) => {
+                  {['loot', 'boss', 'extract', 'quest', 'quest_item'].map((type) => {
                     const mapKey = `${selectedMap}_${type}`;
                     const pins = customPins[mapKey] || [];
                     
@@ -661,6 +673,8 @@ export default function AdminDashboard() {
                       <option value="loot">Interesting Place</option>
                       <option value="boss">Boss</option>
                       <option value="extract">Extract</option>
+                      <option value="quest">Quest Location</option>
+                      <option value="quest_item">Quest Item</option>
                     </select>
                   </div>
                 )}
@@ -863,6 +877,56 @@ export default function AdminDashboard() {
                           <label htmlFor="pmc" className="text-[#9fad7d] text-sm">
                             PMC extract
                           </label>
+                        </div>
+                      </>
+                    )}
+
+                    {formData.type === 'quest' && (
+                      <>
+                        <div>
+                          <label className="block text-[#9fad7d] text-sm mb-2">Quest Giver</label>
+                          <input
+                            type="text"
+                            value={formData.questGiver}
+                            onChange={(e) => setFormData({ ...formData, questGiver: e.target.value })}
+                            className="w-full bg-[#0a0a0a] border border-[#4a5240] rounded px-3 py-2 text-[#e8e6e3]"
+                            placeholder="e.g., Prapor"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[#9fad7d] text-sm mb-2">Objective</label>
+                          <textarea
+                            value={formData.objective}
+                            onChange={(e) => setFormData({ ...formData, objective: e.target.value })}
+                            className="w-full bg-[#0a0a0a] border border-[#4a5240] rounded px-3 py-2 text-[#e8e6e3]"
+                            placeholder="e.g., Find the marked room"
+                            rows={3}
+                          />
+                        </div>
+                      </>
+                    )}
+
+                    {formData.type === 'quest_item' && (
+                      <>
+                        <div>
+                          <label className="block text-[#9fad7d] text-sm mb-2">Item Name</label>
+                          <input
+                            type="text"
+                            value={formData.itemName}
+                            onChange={(e) => setFormData({ ...formData, itemName: e.target.value })}
+                            className="w-full bg-[#0a0a0a] border border-[#4a5240] rounded px-3 py-2 text-[#e8e6e3]"
+                            placeholder="e.g., Bronze Pocket Watch"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[#9fad7d] text-sm mb-2">Needed For</label>
+                          <input
+                            type="text"
+                            value={formData.neededFor}
+                            onChange={(e) => setFormData({ ...formData, neededFor: e.target.value })}
+                            className="w-full bg-[#0a0a0a] border border-[#4a5240] rounded px-3 py-2 text-[#e8e6e3]"
+                            placeholder="e.g., Prapor quest 'Checking'"
+                          />
                         </div>
                       </>
                     )}
