@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { MAPS } from './data/maps';
-import { Skull, Package, DoorOpen } from 'lucide-react';
+import { Skull, Package, DoorOpen, Target, Key } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
@@ -97,18 +97,26 @@ export default function Home() {
                     <p className="text-[#9fad7d] mb-4">{map.description}</p>
 
                     {/* Quick Stats */}
-                    <div className="flex gap-4 text-sm">
+                    <div className="flex flex-wrap gap-3 text-sm">
                       <div className="flex items-center gap-1 text-[#d4a94f]">
                         <Package size={16} />
-                        <span>{mapPinCounts[map.id]?.loot || 0} loot</span>
+                        <span>{mapPinCounts[map.id]?.loot || 0}</span>
                       </div>
                       <div className="flex items-center gap-1 text-[#c44f42]">
                         <Skull size={16} />
-                        <span>{mapPinCounts[map.id]?.boss || 0} boss</span>
+                        <span>{mapPinCounts[map.id]?.boss || 0}</span>
                       </div>
-                      <div className="flex items-center gap-1 text-[#4f9fd4]">
+                      <div className="flex items-center gap-1 text-[#4ade80]">
                         <DoorOpen size={16} />
-                        <span>{mapPinCounts[map.id]?.extract || 0} extract</span>
+                        <span>{mapPinCounts[map.id]?.extract || 0}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-[#f59e42]">
+                        <Target size={16} />
+                        <span>{mapPinCounts[map.id]?.quest || 0}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-[#a855f7]">
+                        <Package size={16} />
+                        <span>{mapPinCounts[map.id]?.quest_item || 0}</span>
                       </div>
                     </div>
                   </div>
