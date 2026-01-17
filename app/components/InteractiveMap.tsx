@@ -147,6 +147,7 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
                     icon={<MapPin size={16} />}
                     isSelected={selectedMarker === location.id}
                     onClick={() => setSelectedMarker(location.id)}
+                    label={location.name}
                   />
                 ))}
 
@@ -174,6 +175,7 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
                     icon={<DoorOpen size={16} />}
                     isSelected={selectedMarker === extract.id}
                     onClick={() => setSelectedMarker(extract.id)}
+                    label={extract.name}
                   />
                 ))}
 
@@ -187,6 +189,7 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
                     icon={<Key size={16} />}
                     isSelected={selectedMarker === keyItem.id}
                     onClick={() => setSelectedMarker(keyItem.id)}
+                    label={keyItem.name}
                   />
                 ))}
             </div>
