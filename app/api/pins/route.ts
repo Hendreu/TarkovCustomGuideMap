@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createPin, deletePin, getAllPins, updatePin } from '@/lib/pins';
+import { createPin, deletePin, getAllPins, updatePin } from '@/lib/storage';
 import { validateAdminAuth, unauthorizedResponse } from '@/lib/auth';
 
 // GET all pins (admin only)
@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const pins = getAllPins();
+    const pins = await getAllPins();
     return NextResponse.json({ pins });
   } catch (error) {
     console.error('Error fetching all pins:', error);
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const pinId = createPin(body);
+    const pinId = await createPin(body);
     
     return NextResponse.json({ 
       success: true, 
@@ -90,7 +90,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    updatePin(pinId, body);
+    await updatePin(pinId, body);
     
     return NextResponse.json({ success: true });
   } catch (error) {
@@ -119,7 +119,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    deletePin(pinId);
+    await deletePin(pinId);
     
     return NextResponse.json({ success: true });
   } catch (error) {

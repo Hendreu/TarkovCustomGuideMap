@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllKeys, createKey, deleteKey, updateKey } from '@/lib/pins';
+import { getAllKeys, createKey, deleteKey, updateKey } from '@/lib/storage';
 import { validateToken } from '@/lib/auth';
 
 // GET /api/keys - Get all keys (admin only)
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const keys = getAllKeys();
+    const keys = await getAllKeys();
     return NextResponse.json({ keys });
   } catch (error) {
     console.error('Error fetching keys:', error);
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const keyId = createKey({
+    const keyId = await createKey({
       id: body.id,
       map_id: body.map_id,
       name: body.name,
@@ -70,7 +70,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Missing id parameter' }, { status: 400 });
     }
 
-    deleteKey(id);
+    await deleteKey(id);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting key:', error);
@@ -95,7 +95,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    updateKey(id, body);
+    await updateKey(id, body);
     
     return NextResponse.json({ success: true });
   } catch (error) {

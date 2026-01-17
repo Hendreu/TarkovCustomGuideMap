@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getPinsByMap } from '@/lib/pins';
+import { getPinsByMap } from '@/lib/storage';
 
 export async function GET(
   request: NextRequest,
@@ -7,7 +7,7 @@ export async function GET(
 ) {
   try {
     const { mapId } = await params;
-    const pins = getPinsByMap(mapId);
+    const pins = await getPinsByMap(mapId);
     
     return NextResponse.json({ pins });
   } catch (error) {
