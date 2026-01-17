@@ -2,12 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createPin, deletePin, getAllPins, updatePin } from '@/lib/storage';
 import { validateAdminAuth, unauthorizedResponse } from '@/lib/auth';
 
-// GET all pins (admin only)
+// GET all pins (public route for stats)
 export async function GET(request: NextRequest) {
-  if (!validateAdminAuth(request)) {
-    return unauthorizedResponse();
-  }
-
   try {
     const pins = await getAllPins();
     return NextResponse.json({ pins });

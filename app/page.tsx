@@ -2,12 +2,11 @@
 
 import Link from 'next/link';
 import { MAPS } from './data/maps';
-import { Map, Skull, Package, DoorOpen, Target } from 'lucide-react';
+import { Skull, Package, DoorOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 
 export default function Home() {
-  const [totalPins, setTotalPins] = useState({ loot: 0, boss: 0, extract: 0, quest: 0, quest_item: 0 });
   const [mapPinCounts, setMapPinCounts] = useState<Record<string, any>>({});
 
   useEffect(() => {
@@ -17,16 +16,6 @@ export default function Home() {
         if (response.ok) {
           const data = await response.json();
           const pins = data.pins || [];
-          
-          // Count total pins by type
-          const counts = {
-            loot: pins.filter((p: any) => p.type === 'loot').length,
-            boss: pins.filter((p: any) => p.type === 'boss').length,
-            extract: pins.filter((p: any) => p.type === 'extract').length,
-            quest: pins.filter((p: any) => p.type === 'quest').length,
-            quest_item: pins.filter((p: any) => p.type === 'quest_item').length,
-          };
-          setTotalPins(counts);
 
           // Count pins per map
           const perMap: Record<string, any> = {};
@@ -81,31 +70,6 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="container mx-auto px-6 py-12">
-        {/* Stats Bar */}
-        <motion.div
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <StatCard icon={<Map />} label="Maps" value={MAPS.length} />
-          <StatCard
-            icon={<Package />}
-            label="Loot Spots"
-            value={totalPins.loot}
-          />
-          <StatCard
-            icon={<Skull />}
-            label="Boss Spawns"
-            value={totalPins.boss}
-          />
-          <StatCard
-            icon={<DoorOpen />}
-            label="Extractions"
-            value={totalPins.extract}
-          />
-        </motion.div>
-
         {/* Maps Grid */}
         <div className="grid md:grid-cols-2 gap-6">
           {MAPS.map((map, index) => (
@@ -167,27 +131,6 @@ export default function Home() {
           </p>
         </div>
       </footer>
-    </div>
-  );
-}
-
-// Stat Card Component
-function StatCard({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: number;
-}) {
-  return (
-    <div className="bg-[#1a1d1a] border border-[#4a5240] rounded-lg p-4 flex items-center gap-4">
-      <div className="text-[#9fad7d]">{icon}</div>
-      <div>
-        <div className="text-2xl font-bold text-[#e8e6e3]">{value}</div>
-        <div className="text-sm text-[#9fad7d]">{label}</div>
-      </div>
     </div>
   );
 }
