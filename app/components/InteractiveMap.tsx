@@ -17,6 +17,7 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
   const [customPins, setCustomPins] = useState<any[]>([]);
   const [customKeys, setCustomKeys] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [pinSize, setPinSize] = useState<number>(1); // 0.5 to 2
 
   // Load custom pins and keys from API
   useEffect(() => {
@@ -79,41 +80,65 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
   return (
     <div className="w-full h-full flex flex-col">
       {/* Filter Controls */}
-      <div className="flex gap-2 p-4 bg-[#1a1d1a] border-b border-[#4a5240]">
-        <FilterButton
-          active={activeFilter === 'all'}
-          onClick={() => setActiveFilter('all')}
-          icon={<MapPin size={18} />}
-          label="All"
-        />
-        <FilterButton
-          active={activeFilter === 'loot'}
-          onClick={() => setActiveFilter('loot')}
-          icon={<MapPin size={18} />}
-          label={`Places (${allLootLocations.length})`}
-          color="#d4a94f"
-        />
-        <FilterButton
-          active={activeFilter === 'boss'}
-          onClick={() => setActiveFilter('boss')}
-          icon={<Skull size={18} />}
-          label={`Bosses (${allBossSpawns.length})`}
-          color="#c44f42"
-        />
-        <FilterButton
-          active={activeFilter === 'extract'}
-          onClick={() => setActiveFilter('extract')}
-          icon={<DoorOpen size={18} />}
-          label={`Extracts (${allExtractions.length})`}
-          color="#4f9fd4"
-        />
-        <FilterButton
-          active={activeFilter === 'key'}
-          onClick={() => setActiveFilter('key')}
-          icon={<Key size={18} />}
-          label={`Keys (${allKeys.length})`}
-          color="#9fad7d"
-        />
+      <div className="flex gap-2 p-4 bg-[#1a1d1a] border-b border-[#4a5240] items-center justify-between">
+        <div className="flex gap-2">
+          <FilterButton
+            active={activeFilter === 'all'}
+            onClick={() => setActiveFilter('all')}
+            icon={<MapPin size={18} />}
+            label="All"
+          />
+          <FilterButton
+            active={activeFilter === 'loot'}
+            onClick={() => setActiveFilter('loot')}
+            icon={<MapPin size={18} />}
+            label={`Places (${allLootLocations.length})`}
+            color="#d4a94f"
+          />
+          <FilterButton
+            active={activeFilter === 'boss'}
+            onClick={() => setActiveFilter('boss')}
+            icon={<Skull size={18} />}
+            label={`Bosses (${allBossSpawns.length})`}
+            color="#c44f42"
+          />
+          <FilterButton
+            active={activeFilter === 'extract'}
+            onClick={() => setActiveFilter('extract')}
+            icon={<DoorOpen size={18} />}
+            label={`Extracts (${allExtractions.length})`}
+            color="#4f9fd4"
+          />
+          <FilterButton
+            active={activeFilter === 'key'}
+            onClick={() => setActiveFilter('key')}
+            icon={<Key size={18} />}
+            label={`Keys (${allKeys.length})`}
+            color="#9fad7d"
+          />
+        </div>
+        
+        {/* Pin Size Controls */}
+        <div className="flex items-center gap-2">
+          <span className="text-[#9fad7d] text-sm font-medium">Pin Size:</span>
+          <button
+            onClick={() => setPinSize(Math.max(0.5, pinSize - 0.25))}
+            disabled={pinSize <= 0.5}
+            className="px-3 py-1 bg-[#0a0a0a] text-[#9fad7d] rounded hover:bg-[#2a3025] disabled:opacity-50 disabled:cursor-not-allowed transition-all font-bold"
+          >
+            −
+          </button>
+          <span className="text-[#e8e6e3] font-semibold min-w-[3rem] text-center">
+            {Math.round(pinSize * 100)}%
+          </span>
+          <button
+            onClick={() => setPinSize(Math.min(2, pinSize + 0.25))}
+            disabled={pinSize >= 2}
+            className="px-3 py-1 bg-[#0a0a0a] text-[#9fad7d] rounded hover:bg-[#2a3025] disabled:opacity-50 disabled:cursor-not-allowed transition-all font-bold"
+          >
+            +
+          </button>
+        </div>
       </div>
 
       {/* Map Container */}
@@ -148,6 +173,7 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
                     isSelected={selectedMarker === location.id}
                     onClick={() => setSelectedMarker(location.id)}
                     label={location.name}
+                    pinSize={pinSize}
                   />
                 ))}
 
@@ -162,6 +188,7 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
                     isSelected={selectedMarker === boss.id}
                     onClick={() => setSelectedMarker(boss.id)}
                     label={boss.name}
+                    pinSize={pinSize}
                   />
                 ))}
 
@@ -176,6 +203,7 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
                     isSelected={selectedMarker === extract.id}
                     onClick={() => setSelectedMarker(extract.id)}
                     label={extract.name}
+                    pinSize={pinSize}
                   />
                 ))}
 
@@ -190,6 +218,7 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
                     isSelected={selectedMarker === keyItem.id}
                     onClick={() => setSelectedMarker(keyItem.id)}
                     label={keyItem.name}
+                    pinSize={pinSize}
                   />
                 ))}
             </div>
@@ -242,9 +271,14 @@ interface MarkerProps {
   isSelected: boolean;
   onClick: () => void;
   label?: string;
+  pinSize: number;
 }
 
-function Marker({ location, color, icon, isSelected, onClick, label }: MarkerProps) {
+function Marker({ location, color, icon, isSelected, onClick, label, pinSize }: MarkerProps) {
+  const baseSize = 32; // Base size in pixels (w-8 = 32px)
+  const scaledSize = baseSize * pinSize;
+  const iconSize = 16 * pinSize;
+  
   return (
     <div
       className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer transition-all"
@@ -256,17 +290,28 @@ function Marker({ location, color, icon, isSelected, onClick, label }: MarkerPro
       onClick={onClick}
     >
       <div
-        className={`relative flex items-center justify-center w-8 h-8 rounded-full transition-all ${
+        className={`relative flex items-center justify-center rounded-full transition-all ${
           isSelected ? 'scale-125 ring-4 ring-white/50' : 'hover:scale-110'
         }`}
-        style={{ backgroundColor: color }}
+        style={{ 
+          backgroundColor: color,
+          width: `${scaledSize}px`,
+          height: `${scaledSize}px`,
+        }}
       >
-        <div className="text-white">{icon}</div>
+        <div className="text-white" style={{ transform: `scale(${pinSize})` }}>
+          {icon}
+        </div>
       </div>
       {label && (
         <div
-          className="absolute top-10 left-1/2 -translate-x-1/2 whitespace-nowrap px-2 py-1 rounded text-xs font-semibold"
-          style={{ backgroundColor: color, color: 'white' }}
+          className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap px-2 py-1 rounded text-xs font-semibold transition-all"
+          style={{ 
+            backgroundColor: color, 
+            color: 'white',
+            top: `${scaledSize + 8}px`,
+            fontSize: `${12 * Math.min(pinSize, 1.5)}px`,
+          }}
         >
           {label}
         </div>
