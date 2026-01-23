@@ -76,6 +76,8 @@ export const MAPS: TarkovMap[] = [
     name: 'Factory',
     description: 'Small CQB map with Tagilla and intense action',
     image: '/maps/Factory.png',
+    width: 1594,
+    height: 914,
     lootLocations: [],
     bossSpawns: [],
     extractions: [],
