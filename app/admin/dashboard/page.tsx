@@ -88,6 +88,11 @@ export default function AdminDashboard() {
     }
   }, [router]);
 
+  // Update formData.mapId when selectedMap changes
+  useEffect(() => {
+    setFormData(prev => ({ ...prev, mapId: selectedMap }));
+  }, [selectedMap]);
+
   // Load pins from API
   const loadPins = async () => {
     try {
