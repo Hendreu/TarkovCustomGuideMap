@@ -96,6 +96,8 @@ export const MAPS: TarkovMap[] = [
     name: 'Ground Zero',
     description: 'Downtown Tarkov with close quarters combat',
     image: '/maps/GroundZero.png',
+    width: 865,
+    height: 866,
     lootLocations: [],
     bossSpawns: [],
     extractions: [],

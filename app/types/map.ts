@@ -40,6 +40,8 @@ export interface TarkovMap {
   name: string;
   description: string;
   image: string;
+  width?: number; // Optional custom width (defaults to 1573)
+  height?: number; // Optional custom height (defaults to 804)
   lootLocations: LootLocation[];
   bossSpawns: BossSpawn[];
   extractions: ExtractionPoint[];

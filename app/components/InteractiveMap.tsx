@@ -176,7 +176,13 @@ export default function InteractiveMap({ map }: InteractiveMapProps) {
             wrapperClass="w-full h-full flex items-center justify-center"
             contentClass="flex items-center justify-center"
           >
-            <div className="relative w-[1573px] h-[804px] bg-[#2a3025]">
+            <div 
+              className="relative bg-[#2a3025]" 
+              style={{ 
+                width: `${map.width || 1573}px`, 
+                height: `${map.height || 804}px` 
+              }}
+            >
               {/* Map Background */}
               <img 
                 src={map.image} 
