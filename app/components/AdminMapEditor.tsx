@@ -117,7 +117,11 @@ export default function AdminMapEditor({ map, onPinPlaced, onCancel, previewPin 
           >
             <div
               ref={mapRef}
-              className="relative w-[1573px] h-[804px] bg-[#2a3025] cursor-crosshair"
+              className="relative bg-[#2a3025] cursor-crosshair"
+              style={{ 
+                width: `${map.width || 1573}px`, 
+                height: `${map.height || 804}px` 
+              }}
               onClick={handleMapClick}
               onMouseMove={handleMapMouseMove}
               onMouseUp={() => setIsDragging(false)}
